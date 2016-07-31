@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+<script type="text/javascript" src="{{ url_for('static', filename='javascript/libs/react-with-addons.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='javascript/libs/react-dom.min.js') }}"></script>
+
+<!-- http://blog.forecast.io/skycons-unobtrustive-animated-weather-icons/
+  These are really cool!-->
+<script type="text/javascript" src="{{ url_for('static', filename='javascript/libs/skycons.js') }}"></script>
+<!-- https://github.com/mapbox/polyline
+  For decoding Strava's polyline_summary into coordinates -->
+<script type="text/javascript" src="{{ url_for('static', filename='javascript/libs/polyline.js') }}"></script>
+
+<!-- For showing map of activity -->
+<script src="https://npmcdn.com/leaflet@1.0.0-rc.2/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://npmcdn.com/leaflet@1.0.0-rc.2/dist/leaflet.css" />
+
+
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+
+
+</head>
+<body>
+    {% include "common/nav.html" %}
+    <div class="container-fluid">
+        <div class="center">
+            <h1>Go <a href="{{ url_for('main.index') }}">Home</a></h1>
+        </div>
+    </div>
+</body>
+</html>

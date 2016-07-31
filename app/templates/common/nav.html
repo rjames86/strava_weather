@@ -1,0 +1,21 @@
+<nav class="navbar navbar-fixed-top">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+      Expand...
+      </button>
+      {% if athlete %}
+      <a class="navbar-brand" href="#">Strava Stats for {{ athlete.firstname }}</a>
+      <a class="navbar-brand" href="/auth/logout">(Logout)</a>
+      {% else %}
+      <a class="navbar-brand" href="#">Strava Stats</a>
+      {% endif %}
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>

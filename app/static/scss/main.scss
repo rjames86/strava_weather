@@ -1,0 +1,138 @@
+$STRAVA_ORANGE: #FC4C02;
+
+
+body {
+  font-family: "Roboto", serif;
+  padding-top: 75px;
+  margin: 0;
+  height: 100%
+}
+
+.list-group-item {
+    border-color: $STRAVA_ORANGE;
+}
+
+.navbar {
+    background-color: $STRAVA_ORANGE;
+    a {
+      color: #fff;
+      font-size: 22px;
+    }
+}
+
+.highlight {
+  background-color: #fdb799;
+}
+
+.map-container {
+    height: 800px;
+}
+
+.strava-map {
+    margin-right: 25px
+}
+
+.weather-rideinfo-container {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.center {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.loader {
+    font-size: 2em;
+    min-height: 158px;
+}
+
+.rideinfo {
+    list-style-type: none;
+    font-size: 18px;
+}
+
+.weather-widget {
+    &__content {
+        min-height: 158px; // So that it doesn't have a weird size hiccup when loading
+        padding: 15px 0 15px 0;
+    }
+    &__description {
+        list-style-type: none;
+        font-size: 24px;
+    }
+}
+
+.activities {
+    overflow-y: scroll;
+}
+
+
+// For Loading dots
+@keyframes blink {
+    /**
+     * At the start of the animation the dot
+     * has an opacity of .2
+     */
+    0% {
+      opacity: .2;
+    }
+    /**
+     * At 20% the dot is fully visible and
+     * then fades out slowly
+     */
+    20% {
+      opacity: 1;
+    }
+    /**
+     * Until it reaches an opacity of .2 and
+     * the animation can start again
+     */
+    100% {
+      opacity: .2;
+    }
+}
+
+.loader  {
+    span {
+        /**
+         * Use the blink animation, which is defined above
+         */
+        animation-name: blink;
+        /**
+         * The animation should take 1.4 seconds
+         */
+        animation-duration: 1.4s;
+        /**
+         * It will repeat itself forever
+         */
+        animation-iteration-count: infinite;
+        /**
+         * This makes sure that the starting style (opacity: .2)
+         * of the animation is applied before the animation starts.
+         * Otherwise we would see a short flash or would have
+         * to set the default styling of the dots to the same
+         * as the animation. Same applies for the ending styles.
+         */
+        animation-fill-mode: both;
+    }
+}
+
+.loader span:nth-child(2) {
+    /**
+     * Starts the animation of the third dot
+     * with a delay of .2s, otherwise all dots
+     * would animate at the same time
+     */
+    animation-delay: .2s;
+}
+
+.loader span:nth-child(3) {
+    /**
+     * Starts the animation of the third dot
+     * with a delay of .4s, otherwise all dots
+     * would animate at the same time
+     */
+    animation-delay: .4s;
+}
