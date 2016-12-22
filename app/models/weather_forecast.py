@@ -16,5 +16,5 @@ class ForecastIo(object):
         return forecast.load_forecast(ForecastIo().api_key, lat, lng, datetime_from_string(time))
 
     @staticmethod
-    def get_weather_on_date(lat, lng, time):
+    def get_weather_on_date(lat, lng, time=arrow.now()):
         return ForecastIo.load_forecast(lat, lng, datetime_from_string(time)).currently()

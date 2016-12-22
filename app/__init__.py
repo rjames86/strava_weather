@@ -36,9 +36,13 @@ def create_app(config_name='default'):
     from .main import main as main_blueprint
     from .auth import auth as auth_blueprint
     from .strava import strava as strava_blueprint
+    from .rwgs import rwgs as rwgs_blueprint
+    from .weather import weather as weather_blueprint
 
     app.register_blueprint(main_blueprint)
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
     app.register_blueprint(strava_blueprint, url_prefix='/strava')
+    app.register_blueprint(rwgs_blueprint, url_prefix='/rwgs')
+    app.register_blueprint(weather_blueprint, url_prefix='/weather')
 
     return app

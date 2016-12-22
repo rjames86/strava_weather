@@ -14,3 +14,9 @@ from flask_login import login_required, current_user
 @login_required
 def index():
     return render_template('main/index.html', athlete=current_user.athlete())
+
+@main.route('/mapweather')
+def mapweather():
+    return render_template('main/mapweather.html')
+
+
