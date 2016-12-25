@@ -20,11 +20,6 @@
       return this.createMap();
     },
     componentDidMount: function() {
-      console.log(_.findKey(UNITS, (function(_this) {
-        return function(value, key) {
-          return _this.props.unit === value;
-        };
-      })(this)));
       return this.createMap();
     },
     speed: function() {
@@ -372,7 +367,7 @@
           height: '100%'
         }
       }, d.div({
-        className: 'col-md-2 col-sm-2',
+        className: 'col-md-3 col-sm-3',
         style: this.sidebarStyle()
       }, Form({
         onUnitChange: this.onUnitChange,
@@ -381,7 +376,7 @@
         onSpeedChange: this.onSpeedChange,
         speed: this.state.speed
       })), d.div({
-        className: 'col-md-10 col-sm-10',
+        className: 'col-md-9 col-sm-9',
         style: {
           height: "100%"
         }

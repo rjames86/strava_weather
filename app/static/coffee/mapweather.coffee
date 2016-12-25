@@ -13,7 +13,6 @@ Map = React.createFactory React.createClass
       return
     @createMap()
   componentDidMount: ->
-    console.log _.findKey UNITS, (value, key) => @props.unit is value
     @createMap()
 
   speed: ->
@@ -261,7 +260,7 @@ Main = React.createFactory React.createClass
           height: '100%'
         ,
           d.div
-            className: 'col-md-2 col-sm-2'
+            className: 'col-md-3 col-sm-3'
             style: @sidebarStyle()
           ,
             Form
@@ -271,7 +270,7 @@ Main = React.createFactory React.createClass
               onSpeedChange: @onSpeedChange
               speed: @state.speed
           d.div
-            className: 'col-md-10 col-sm-10'
+            className: 'col-md-9 col-sm-9'
             style:
               height: "100%"
           ,
