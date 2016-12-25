@@ -13,7 +13,8 @@ from flask_login import login_required, current_user
 @main.route('/')
 @login_required
 def index():
-    return render_template('main/index.html', athlete=current_user.athlete())
+    return redirect(url_for('main.mapweather'))
+    # return render_template('main/index.html', athlete=current_user.athlete())
 
 @main.route('/mapweather')
 def mapweather():
