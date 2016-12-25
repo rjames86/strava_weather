@@ -15,18 +15,28 @@ Map = React.createFactory React.createClass
   componentDidMount: ->
     @createMap()
 
-  speed: ->
+  unitsHuman: ->
+    unitString = _.findKey UNITS, (value, key) => @props.unit is value
+    if unitString then unitString.toLowerCase() else ''
+
+  unitsSwitch: (whenMiles, whenKM) ->
+    miles = if _.isFunction whenMiles then whenMiles() else whenMiles
+    km = if _.isFunction km then whenKM() else whenKM
     switch @props.unit
-      when UNITS.MILES then @props.speed # miles per hour
-      when UNITS.KM then @props.speed * 1000 # meters per hour
+      when UNITS.MILES then miles
+      when UNITS.KM then km
+
+  speed: ->
+    @unitsSwitch @props.speed, @props.speed * 1000
 
   pointDistance: (point) ->
-    switch @props.unit
-      when UNITS.MILES then point.d / 1609.344 # meters -> miles
-      when UNITS.KM then point.d
+    @unitsSwitch (point.d / 1609.344), point.d
+
+  humanDistance: (point) ->
+    distance = @pointDistance point
+    @unitsSwitch distance, distance / 1000
 
   calculateTimeFromStart: (point) ->
-    console.log "we assume distance #{@pointDistance(point)} at #{@speed()}"
     time = (@pointDistance(point) / @speed()) * 60 * 60 # <unit> per second
     @props.startTime + time
 
@@ -60,11 +70,7 @@ Map = React.createFactory React.createClass
       toRet += keyMap[key](value) unless not keyMap[key]?
     duration = (@calculateTimeFromStart(point) - @props.startTime) / 60 / 60
     toRet += listItem 'Estimated Duration', "#{duration.toFixed(2)} hours"
-    unitString = _.findKey UNITS, (value, key) => @props.unit is value
-    humanDistance = @pointDistance(point)
-    if @props.unit is UNITS.KM
-      humanDistance = humanDistance / 1000
-    toRet += listItem 'Current Distance', "#{humanDistance.toFixed(2)} #{unitString.toLowerCase()}"
+    toRet += listItem 'Current Distance', "#{@humanDistance().toFixed(2)} #{@unitsHuman()}"
 
     toRet += '</dl>'
     toRet
@@ -146,7 +152,7 @@ UnitsOption = React.createFactory React.createClass
           name: 'units'
           onChange: => @props.onUnitChange UNITS.MILES
           defaultChecked: @props.currentUnit is UNITS.MILES
-        "Miles"
+        "Imperial"
       d.label
         className: 'radio-inline',
         d.input
@@ -155,7 +161,7 @@ UnitsOption = React.createFactory React.createClass
           value: UNITS.KM
           onChange: => @props.onUnitChange UNITS.KM
           defaultChecked: @props.currentUnit is UNITS.KM
-        "KM"
+        "Metric"
 
 Form = React.createFactory React.createClass
   getInitialState: ->
@@ -217,6 +223,60 @@ Form = React.createFactory React.createClass
                 d.span
                   className: 'glyphicon glyphicon-calendar'
 
+RouteInfo = React.createFactory React.createClass
+  displayName: "RouteInfo"
+
+  # TODO(ryan) DRY
+  unitsSwitch: (whenMiles, whenKM) ->
+    miles = if _.isFunction whenMiles then whenMiles() else whenMiles
+    km = if _.isFunction km then whenKM() else whenKM
+    switch @props.unit
+      when UNITS.MILES then miles
+      when UNITS.KM then km
+
+  # TODO(ryan) DRY
+  unitsHuman: ->
+    unitString = _.findKey UNITS, (value, key) => @props.unit is value
+    if unitString then unitString.toLowerCase() else ''
+
+  unitsHeight: ->
+    @unitsSwitch "ft", "m"
+
+  # TODO(ryan) DRY
+  humanDistance: (distance) ->
+    @unitsSwitch (distance / 1609.344).toFixed(2), (distance / 1000).toFixed(2)
+
+  humanElevation: (elev) ->
+    @unitsSwitch (elev / .3048).toFixed(2), elev
+
+  listItem: (val, key) ->
+    keyMap =
+      name:
+        humanName: "Name"
+      description:
+        humanName: "Description"
+      distance:
+        humanName: "Distance"
+        value: (v) => "#{@humanDistance(val)} #{@unitsHuman()}"
+      elevation_gain:
+        humanName: "Elevation Gain"
+        value: (v) => "#{@humanElevation(val)} #{@unitsHeight()}"
+    [
+      d.dt(null, keyMap[key]?.humanName),
+      d.dd(null, if keyMap[key]?.value? then keyMap[key].value(val) else val)
+    ]
+
+  render: ->
+    data = _.pick @props.rwgsData, ['name', 'description', 'distance', 'elevation_gain']
+    d.div {},
+      d.dl
+        className: 'dl-horizontal'
+      ,
+      if not _.isEmpty data
+        (@listItem val, key for key, val of data)
+      else
+        d.div()
+
 Main = React.createFactory React.createClass
   displayName: 'Main'
 
@@ -269,6 +329,9 @@ Main = React.createFactory React.createClass
               onSearchSuccess: @onSearchSuccess
               onSpeedChange: @onSpeedChange
               speed: @state.speed
+            RouteInfo
+              rwgsData: @state.rwgsData
+              unit: @state.unit
           d.div
             className: 'col-md-9 col-sm-9'
             style:

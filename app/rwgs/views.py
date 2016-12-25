@@ -19,7 +19,10 @@ def get_route(id):
 def get_trip(id):
     return jsonify(data=RWGS.get_trip_points(id))
 
-# @rwgs.route('/activity/<int:id>')
-# @login_required
-# def activity(id):
-#     return jsonify(data=current_user.get_activity(id))
+@rwgs.route('/route/<int:id>/raw')
+def get_route_raw(id):
+    return jsonify(data=RWGS.get_rout_by_id(id))
+
+@rwgs.route('/trip/<int:id>/raw')
+def get_trip_raw(id):
+    return jsonify(data=RWGS.get_trip_by_id(id))

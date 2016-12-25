@@ -9,6 +9,16 @@ from app.lib.rwgs import RWGS as RWGSLib
 
 
 class RWGS(object):
+    KEYS_TO_KEEP = [
+        'id',
+        'description',
+        'distance',
+        'elevation_gain',
+        'name',
+        'track_id',
+        'track_points'
+    ]
+
     def __init__(self):
         self.client = RWGSLib('f7faf5ac')
 
@@ -25,14 +35,12 @@ class RWGS(object):
     @classmethod
     def get_track_points(cls, route_id):
         track = cls.get_route_by_id(route_id)
-        return dict(track_points=track['route'].get('track_points', []),
-                    id=track['route']['id'])
+        return {k: track['route'].get(k) for k in cls.KEYS_TO_KEEP}
 
     @classmethod
     def get_trip_points(cls, route_id):
         trip = cls.get_trip_by_id(route_id)
-        return dict(track_points=trip['trip'].get('track_points', []),
-                    id=trip['trip']['id'])
+        return {k: trip['trip'].get(k) for k in cls.KEYS_TO_KEEP}
 
 
 
