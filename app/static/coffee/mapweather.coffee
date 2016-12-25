@@ -70,7 +70,7 @@ Map = React.createFactory React.createClass
       toRet += keyMap[key](value) unless not keyMap[key]?
     duration = (@calculateTimeFromStart(point) - @props.startTime) / 60 / 60
     toRet += listItem 'Estimated Duration', "#{duration.toFixed(2)} hours"
-    toRet += listItem 'Current Distance', "#{@humanDistance().toFixed(2)} #{@unitsHuman()}"
+    toRet += listItem 'Current Distance', "#{@humanDistance(point).toFixed(2)} #{@unitsHuman()}"
 
     toRet += '</dl>'
     toRet
@@ -200,13 +200,19 @@ Form = React.createFactory React.createClass
           className: 'btn btn-default'
           onClick: @searchRWGS
           , 'Submit'
-        d.input
-          type: 'number'
-          className: 'form-control'
-          id: 'rwgsSpeed'
-          placeholder: 'RWGS Speed'
-          value: @props.speed
-          onChange: @props.onSpeedChange
+        d.div
+          className: 'input-group'
+          ,
+          d.input
+            type: 'number'
+            className: 'form-control'
+            id: 'rwgsSpeed'
+            placeholder: 'RWGS Speed'
+            value: @props.speed
+            onChange: @props.onSpeedChange
+          d.span
+            className: 'input-group-addon'
+            , 'Estimated Speed'
         UnitsOption
           onUnitChange: @props.onUnitChange
           currentUnit: @props.currentUnit
@@ -277,6 +283,35 @@ RouteInfo = React.createFactory React.createClass
       else
         d.div()
 
+InfoAboutSite = React.createFactory React.createClass
+  messageText: ->
+    [
+      "Welcome! This is still in beta, so everything may not work. If you're here, I assume you know how to contact me. Please let me know if something breaks."
+      "Everything you see should be hooked up."
+      "- RideWithGPS routes and trips are supported right now."
+      "- Search may be slow. If you hit submit, it's searching. I don't have a loader indicator yet"
+      "- If you change the date, speed or units, you'll have to click on the point again to get updated info"
+    ]
+
+  render: ->
+    d.div
+      className: "well"
+      ,
+        (d.p {key: index}, t for t, index in @messageText())
+
+Footer = React.createFactory React.createClass
+  render: ->
+    d.footer
+      className: 'footer'
+      ,
+      d.div
+        className: 'container'
+        ,
+        d.p
+          className: 'text-muted'
+          ,
+          d.a {href: 'https://darksky.net/poweredby/'}, 'Weather powered by Dark Sky'
+
 Main = React.createFactory React.createClass
   displayName: 'Main'
 
@@ -332,6 +367,8 @@ Main = React.createFactory React.createClass
             RouteInfo
               rwgsData: @state.rwgsData
               unit: @state.unit
+            InfoAboutSite()
+            Footer()
           d.div
             className: 'col-md-9 col-sm-9'
             style:
