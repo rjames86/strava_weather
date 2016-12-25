@@ -176,10 +176,14 @@ Form = React.createFactory React.createClass
         url: "/rwgs/#{route}/#{urlMatch[2]}",
         success: @props.onSearchSuccess
 
+  formStyles: ->
+    padding: "15px 0 0 15px"
+
   render: ->
     d.form
       className: 'input-group'
       id: 'rwgs-search'
+      style: @formStyles()
       ,
         d.input
           type: 'text'
@@ -219,6 +223,10 @@ Main = React.createFactory React.createClass
   onSpeedChange: (e) -> @setState speed: parseInt e.target.value
   onSearchSuccess: (res) -> @setState rwgsData: res.data
 
+  sidebarStyle: ->
+    border: "1px solid #eeeeee"
+    height: "100%"
+
   render: ->
     d.div
       className: 'container-fluid'
@@ -230,6 +238,7 @@ Main = React.createFactory React.createClass
         ,
           d.div
             className: 'col-md-2 col-sm-2'
+            style: @sidebarStyle()
           ,
             Form
               onUnitChange: @onUnitChange

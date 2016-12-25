@@ -252,10 +252,16 @@
         });
       }
     },
+    formStyles: function() {
+      return {
+        padding: "15px 0 0 15px"
+      };
+    },
     render: function() {
       return d.form({
         className: 'input-group',
-        id: 'rwgs-search'
+        id: 'rwgs-search',
+        style: this.formStyles()
       }, d.input({
         type: 'text',
         className: 'form-control',
@@ -314,6 +320,12 @@
         rwgsData: res.data
       });
     },
+    sidebarStyle: function() {
+      return {
+        border: "1px solid #eeeeee",
+        height: "100%"
+      };
+    },
     render: function() {
       return d.div({
         className: 'container-fluid'
@@ -323,7 +335,8 @@
           height: '100%'
         }
       }, d.div({
-        className: 'col-md-2 col-sm-2'
+        className: 'col-md-2 col-sm-2',
+        style: this.sidebarStyle()
       }, Form({
         onUnitChange: this.onUnitChange,
         currentUnit: this.state.unit,
