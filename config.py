@@ -15,6 +15,11 @@ class Config:
     def init_app(app):
         pass
 
+class Development(Config):
+    import prod_config as config
+    STRAVA_CLIENT_ID = config.STRAVA_CLIENT_ID
+    STRAVA_CLIENT_SECRET = config.STRAVA_CLIENT_SECRET
+    FORECASTIO_KEY = config.FORECASTIO_KEY
 
 class Production(Config):
     import prod_config as config
@@ -24,7 +29,7 @@ class Production(Config):
     STRAVA_CLIENT_SECRET = config.STRAVA_CLIENT_SECRET
     FORECASTIO_KEY = config.FORECASTIO_KEY
 
-    DEBUG = True
+    DEBUG = False
 
 class HerokuConfig(Config):
     DEBUG = False
@@ -41,7 +46,7 @@ class HerokuConfig(Config):
         app.logger.addHandler(file_handler)
 
 config = {
-    'default': Config,
+    'default': Development,
     'prod': Production,
     'heroku': HerokuConfig
 }

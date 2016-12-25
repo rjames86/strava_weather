@@ -24,11 +24,15 @@ class RWGS(object):
 
     @classmethod
     def get_track_points(cls, route_id):
-        return dict(track_points=cls.get_route_by_id(route_id)['route'].get('track_points', []))
+        track = cls.get_route_by_id(route_id)
+        return dict(track_points=track['route'].get('track_points', []),
+                    id=track['route']['id'])
 
     @classmethod
     def get_trip_points(cls, route_id):
-        return dict(track_points=cls.get_trip_by_id(route_id)['trip'].get('track_points', []))
+        trip = cls.get_trip_by_id(route_id)
+        return dict(track_points=trip['trip'].get('track_points', []),
+                    id=trip['trip']['id'])
 
 
 
