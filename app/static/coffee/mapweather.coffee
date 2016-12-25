@@ -12,9 +12,10 @@ Map = React.createFactory React.createClass
     if prevProps.rwgsData.id is @props.rwgsData.id
       return
     @createMap()
-  componentDidMount: -> @createMap()
+  componentDidMount: ->
+    console.log _.findKey UNITS, (value, key) => @props.unit is value
+    @createMap()
 
-  startTime: -> parseInt (+new Date('12/24/2016 13:37') / 1000)
   speed: ->
     switch @props.unit
       when UNITS.MILES then @props.speed # miles per hour
@@ -28,7 +29,7 @@ Map = React.createFactory React.createClass
   calculateTimeFromStart: (point) ->
     console.log "we assume distance #{@pointDistance(point)} at #{@speed()}"
     time = (@pointDistance(point) / @speed()) * 60 * 60 # <unit> per second
-    @startTime() + time
+    @props.startTime + time
 
   getWeatherForPoint: (point, callback) ->
     console.log @savedPoints
@@ -58,8 +59,14 @@ Map = React.createFactory React.createClass
     toRet = "<dl class='dl-horizontal'>"
     for key, value of info.data
       toRet += keyMap[key](value) unless not keyMap[key]?
-    duration = (@calculateTimeFromStart(point) - @startTime()) / 60 / 60
+    duration = (@calculateTimeFromStart(point) - @props.startTime) / 60 / 60
     toRet += listItem 'Estimated Duration', "#{duration.toFixed(2)} hours"
+    unitString = _.findKey UNITS, (value, key) => @props.unit is value
+    humanDistance = @pointDistance(point)
+    if @props.unit is UNITS.KM
+      humanDistance = humanDistance / 1000
+    toRet += listItem 'Current Distance', "#{humanDistance.toFixed(2)} #{unitString.toLowerCase()}"
+
     toRet += '</dl>'
     toRet
 
@@ -90,7 +97,6 @@ Map = React.createFactory React.createClass
             infowindow.open map, marker
 
   createMap: ->
-    console.log "weather data" , @props.rwgsData, _.isEmpty @props.rwgsData
     if _.isEmpty @props.rwgsData
       return
     {track_points} = @props.rwgsData
@@ -153,13 +159,6 @@ UnitsOption = React.createFactory React.createClass
         "KM"
 
 Form = React.createFactory React.createClass
-  # <div class='input-group date' id='datetimepicker1'>
-  #     <input type='text' class='form-control' />
-  #     <span class='input-group-addon'>
-  #         <span class='glyphicon glyphicon-calendar'></span>
-  #     </span>
-  # </div>
-
   getInitialState: ->
     searchLink: ''
 
@@ -206,6 +205,18 @@ Form = React.createFactory React.createClass
         UnitsOption
           onUnitChange: @props.onUnitChange
           currentUnit: @props.currentUnit
+        d.div
+          className: 'input-group date'
+          id: 'datetimepicker'
+          ,
+            d.input
+              type: 'text'
+              className: 'form-control'
+            d.span
+              className: 'input-group-addon'
+              ,
+                d.span
+                  className: 'glyphicon glyphicon-calendar'
 
 Main = React.createFactory React.createClass
   displayName: 'Main'
@@ -214,14 +225,27 @@ Main = React.createFactory React.createClass
     unit: UNITS.MILES
     speed: 15
     rwgsData: {}
+    date: +moment()
+
+  componentDidMount: ->
+    # http://eonasdan.github.io/bootstrap-datetimepicker/
+    $('#datetimepicker').datetimepicker(
+      defaultDate: +moment()
+    )
+    $('#datetimepicker').on "dp.change", @onDateChange
 
   componentDidUpdate: ->
     console.log 'units now', @state.unit
     console.log 'speed now', @state.speed
+    console.log 'date now', @state.date
 
   onUnitChange: (u) -> @setState unit: u
   onSpeedChange: (e) -> @setState speed: parseInt e.target.value
+  onDateChange: (e) -> @setState date: e.date
   onSearchSuccess: (res) -> @setState rwgsData: res.data
+
+  date: ->
+    +@state.date / 1000
 
   sidebarStyle: ->
     border: "1px solid #eeeeee"
@@ -255,6 +279,7 @@ Main = React.createFactory React.createClass
               rwgsData: @state.rwgsData
               unit: @state.unit
               speed: @state.speed
+              startTime: @date()
 
 $ ->
   window.initMap = ->

@@ -20,10 +20,12 @@
       return this.createMap();
     },
     componentDidMount: function() {
+      console.log(_.findKey(UNITS, (function(_this) {
+        return function(value, key) {
+          return _this.props.unit === value;
+        };
+      })(this)));
       return this.createMap();
-    },
-    startTime: function() {
-      return parseInt(+new Date('12/24/2016 13:37') / 1000);
     },
     speed: function() {
       switch (this.props.unit) {
@@ -45,7 +47,7 @@
       var time;
       console.log("we assume distance " + (this.pointDistance(point)) + " at " + (this.speed()));
       time = (this.pointDistance(point) / this.speed()) * 60 * 60;
-      return this.startTime() + time;
+      return this.props.startTime + time;
     },
     getWeatherForPoint: function(point, callback) {
       console.log(this.savedPoints);
@@ -67,7 +69,7 @@
       });
     },
     makeInfoWindow: function(point, info) {
-      var duration, key, keyMap, listItem, ref, toRet, value;
+      var duration, humanDistance, key, keyMap, listItem, ref, toRet, unitString, value;
       listItem = function(i, j) {
         return "<dt>" + i + "</dt><dd>" + j + "</dd>";
       };
@@ -105,8 +107,18 @@
           toRet += keyMap[key](value);
         }
       }
-      duration = (this.calculateTimeFromStart(point) - this.startTime()) / 60 / 60;
+      duration = (this.calculateTimeFromStart(point) - this.props.startTime) / 60 / 60;
       toRet += listItem('Estimated Duration', (duration.toFixed(2)) + " hours");
+      unitString = _.findKey(UNITS, (function(_this) {
+        return function(value, key) {
+          return _this.props.unit === value;
+        };
+      })(this));
+      humanDistance = this.pointDistance(point);
+      if (this.props.unit === UNITS.KM) {
+        humanDistance = humanDistance / 1000;
+      }
+      toRet += listItem('Current Distance', (humanDistance.toFixed(2)) + " " + (unitString.toLowerCase()));
       toRet += '</dl>';
       return toRet;
     },
@@ -151,7 +163,6 @@
     },
     createMap: function() {
       var coordinates, map, point, routePath, track_points;
-      console.log("weather data", this.props.rwgsData, _.isEmpty(this.props.rwgsData));
       if (_.isEmpty(this.props.rwgsData)) {
         return;
       }
@@ -288,7 +299,17 @@
       }), UnitsOption({
         onUnitChange: this.props.onUnitChange,
         currentUnit: this.props.currentUnit
-      }));
+      }), d.div({
+        className: 'input-group date',
+        id: 'datetimepicker'
+      }, d.input({
+        type: 'text',
+        className: 'form-control'
+      }), d.span({
+        className: 'input-group-addon'
+      }, d.span({
+        className: 'glyphicon glyphicon-calendar'
+      }))));
     }
   }));
 
@@ -298,12 +319,20 @@
       return {
         unit: UNITS.MILES,
         speed: 15,
-        rwgsData: {}
+        rwgsData: {},
+        date: +moment()
       };
+    },
+    componentDidMount: function() {
+      $('#datetimepicker').datetimepicker({
+        defaultDate: +moment()
+      });
+      return $('#datetimepicker').on("dp.change", this.onDateChange);
     },
     componentDidUpdate: function() {
       console.log('units now', this.state.unit);
-      return console.log('speed now', this.state.speed);
+      console.log('speed now', this.state.speed);
+      return console.log('date now', this.state.date);
     },
     onUnitChange: function(u) {
       return this.setState({
@@ -315,10 +344,18 @@
         speed: parseInt(e.target.value)
       });
     },
+    onDateChange: function(e) {
+      return this.setState({
+        date: e.date
+      });
+    },
     onSearchSuccess: function(res) {
       return this.setState({
         rwgsData: res.data
       });
+    },
+    date: function() {
+      return +this.state.date / 1000;
     },
     sidebarStyle: function() {
       return {
@@ -351,7 +388,8 @@
       }, Map({
         rwgsData: this.state.rwgsData,
         unit: this.state.unit,
-        speed: this.state.speed
+        speed: this.state.speed,
+        startTime: this.date()
       }))));
     }
   }));
