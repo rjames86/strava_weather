@@ -20,7 +20,7 @@ class RWGS(object):
     ]
 
     def __init__(self):
-        self.client = RWGSLib('f7faf5ac')
+        self.client = RWGSLib(current_app.config['RWGS_KEY'])
 
     @classmethod
     def get_route_by_id(cls, route_id):

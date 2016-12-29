@@ -61,8 +61,3 @@ class RWGS(object):
 
     def __getattr__(self, k):
         return RWGSCall(self.token, k)
-
-# if __name__ == '__main__':
-#     r = RWGS('f7faf5ac')
-#     print r.routes()
-
